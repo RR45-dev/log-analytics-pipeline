@@ -1,0 +1,38 @@
+server:
+  port: 8071
+
+spring:
+  application:
+    name: aggregator-service
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/logpipe?createDatabaseIfNotExist=true
+    username: ${MYSQL_USER:logpipe}
+    password: ${MYSQL_PASSWORD:logpipe}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
+    consumer:
+      group-id: aggregator-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+
+grpc:
+  server:
+    port: 9090
+
+app:
+  bigquery:
+    enabled: ${BIGQUERY_ENABLED:false}
+    project-id: ${GCP_PROJECT_ID:}
+    dataset: ${BIGQUERY_DATASET:log_analytics}
+    table: ${BIGQUERY_TABLE:service_error_rates}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
